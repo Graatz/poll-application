@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row-col align-center">
+    <h1>Welcome to poll app!</h1>
+    <p>
+        Create your own poll and share it. It's easy, just click the button below
+    </p>
+</div>
+
+<div class="row justify-center">
+    <button onclick="location.href='@Url.Action("Form", "Poll", new { @viewModel = new poll_application.ViewModels.PollFormViewModel() })'">Create new poll</button>
+    <button onclick="location.href='@Url.Action("Browse", "Poll")'">Browse polls</button>
+</div>

@@ -1,0 +1,27 @@
+﻿@model poll_application.ViewModels.PollSearchViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <h1>Search phrase: <strong>@Model.Phrase</strong></h1>
+</div>
+
+<div class="row-col">
+    <h2>Results</h2>
+    @if (Model.Polls.Count == 0)
+    {
+        <p>Brak wyników</p>
+    }
+    @foreach (var poll in Model.Polls)
+    {
+        <div class="row search-row space-between">
+            @Html.ActionLink(@poll.Name, "Vote", "Poll", new { @id = @poll.Id }, null)
+            <small class="vote-number">@poll.Votes votes</small>
+        </div>
+    }
+</div>
+
+
+

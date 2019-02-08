@@ -1,0 +1,17 @@
+﻿<nav class="navbar">
+    <div class="logo"><span class="secondary-color">Poll</span><span class="primary-color">App</span></div>
+        <ul>
+            <li>
+                @using (Html.BeginForm("Search", "Poll"))
+                {
+                    <input type="text" id="phrase" name="phrase" placeholder="Search..." />
+                }
+            </li>
+           
+            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+            <li>@Html.ActionLink("Browse", "Browse", "Poll")</li>
+            <li>
+                <button onclick="location.href='@Url.Action("Form", "Poll", new { @viewModel = new poll_application.ViewModels.PollFormViewModel() })'">New poll</button>
+            </li>
+        </ul>
+</nav>

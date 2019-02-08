@@ -1,0 +1,107 @@
+﻿@model poll_application.ViewModels.PollFormViewModel
+@{
+    ViewBag.Title = "Poll form";
+}
+
+<div class="row header-row">
+    <h1>Create new poll</h1>
+</div>
+
+<div class="row form-row">
+    @using (Html.BeginForm("Save", "Poll", FormMethod.Post, new { @class = "form-row" }))
+    {
+        <div class="row">
+            @Html.TextBoxFor(m => m.Poll.Name, null, new { @class="name-input", @placeholder = "poll title content" })
+        </div>
+        
+        <div class="row-col poll-options">
+            @for (int i = 0; i < Model.Options.Count; i++)
+            {
+                <div class="row">
+                    @Html.TextBoxFor(m => m.Options[i].Name, null, new { @class = "option-input", @placeholder = "poll option content" })
+                </div>
+            }
+        </div>
+
+        <div class="row">
+            <div class="checkbox">
+                <input type="checkbox" name="Poll.MultiVote" id="Poll_MultiVote" value="true"/>
+                <label for="Poll_MultiVote"></label>
+            </div>
+            <p>Allow multi voting</p>
+        </div>
+
+        <div class="row">
+            <div class="checkbox">
+                <input type="checkbox" name="Poll.Private" id="Poll_Private" value="true"/>
+                <label for="Poll_Private"></label>
+            </div>
+            <p>Make poll private</p>
+        </div>
+
+        <div class="hidden-id">
+            @Html.HiddenFor(m => m.Poll.Name)
+            @for (int i = 0; i < Model.Options.Count; i++)
+            {
+                @Html.HiddenFor(m => m.Options[i].Id)
+            }
+        </div>
+
+        @Html.AntiForgeryToken();
+
+        <div class="row justify-end">
+            <button type="submit">Create poll</button>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".option-input:last").keypress(function () {
+                updateInputs();            
+            });
+
+            function alterLastInput(callback) {
+                if ($(".option-input").length > 2) {
+                    // Updating last input
+                    $(".option-input:last").attr("name", "Options[" + ($(".option-input").length - 1) + "].Name");
+                    $(".option-input:last").attr("id", "Options_" + ($(".option-input").length - 1) + "__Name");
+                    $(".option-input:last").attr("data-val", "true");
+
+                    // Adding hidden input for id
+                    let hiddenId = document.createElement("input");
+                    hiddenId.setAttribute("data-val", "true");
+                    hiddenId.name = "Options[" + ($(".option-input").length - 1) + "].Id";
+                    hiddenId.id = "Options_" + ($(".option-input").length - 1) + "__Id";
+                    hiddenId.type = "hidden";
+                    hiddenId.value = "0";
+                    $(".hidden-id").append(hiddenId);
+                }
+                
+                createNewInput();
+            }
+
+            function updateInputs() {
+                $(".option-input:last").off("keypress");
+                alterLastInput();
+            }
+
+            function createNewInput() {
+                // Creating container
+                let container = document.createElement("div");
+                container.className = "row";
+
+                // Creating option input
+                let input = document.createElement("input");
+                input.type = "text";
+                input.className = "option-input";
+                input.placeholder = "poll option content";
+                $(input).keypress(updateInputs);
+                container.append(input);
+
+                $(".poll-options").append(container);
+            }
+        });
+    </script> 
+}

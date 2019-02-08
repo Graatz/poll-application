@@ -1,0 +1,77 @@
+﻿@model poll_application.ViewModels.PollVoteViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Poll application";
+}
+
+<div class="row-col">
+    <h1>@Model.Poll.Name</h1>
+    @if (Model.Poll.Private)
+    {
+        <small>Private</small>
+    }
+</div>
+
+<div class="row-col options">
+    @for (int i = 0; i < Model.PollOptions.Count(); i++)
+    {
+        <div class="row option">
+            <div class="checkbox">
+                <input class="option-checkbox" type="checkbox" id="checkbox-@i" id-data="@Model.PollOptions.ElementAt(i).Id"/>
+                <label for="checkbox-@i"></label>
+            </div>
+            <p>@Model.PollOptions.ElementAt(i).Name</p>
+        </div>
+    }
+
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+</div>
+
+<div class="row align-center">
+    <div class="link">
+        @HttpContext.Current.Request.Url.AbsoluteUri
+    </div>
+    <button class="vote-button">Vote</button>
+    <button onclick="location.href='@Url.Action("Result", "Poll", new { @id = Model.Poll.Id })'">Results</button>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            let checkedCheckbox = null;
+
+            $(".option-checkbox").change(function () {
+                let element = $(this);
+                if (this.checked) {
+                    checkedCheckbox = element;
+                    let checkboxes = $("input").not(element).prop('checked', false);
+                } else {
+                    checkedCheckbox = null
+                }
+            });
+
+            $(".vote-button").click(function () {
+                if (checkedCheckbox != null) {
+                    let form = $("#__AjaxAntiForgeryForm");
+                    let token = $('input[name="__RequestVerificationToken"]', form).val();
+                    $.ajax({
+                        url: "/Poll/VoteAction/",
+                        data: {
+                            __RequestVerificationToken: token,
+                            id: checkedCheckbox.attr("id-data")
+                        },
+                        method: "POST",
+                        success: function (response) {
+                            window.location = response.url;
+                        }
+                    })
+                }
+            });
+        });
+    </script>    
+}
+

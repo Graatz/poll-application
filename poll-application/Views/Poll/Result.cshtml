@@ -1,0 +1,56 @@
+﻿@model poll_application.ViewModels.PollVoteViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <h1>@Model.Poll.Name</h1>
+</div>
+
+<div class="row-col">
+    <h2>Results: </h2>
+    @foreach (var option in Model.PollOptions)
+    {
+        double percentage = 0;
+        if (Model.Poll.Votes > 0)
+        {
+            percentage = Math.Round(((double)option.Votes / (double)Model.Poll.Votes) * 100);
+        }
+        else
+        {
+            percentage = 0;
+        }
+
+        <div class="row-col">
+            <p>@option.Name <span class="vote-number primary-color">(@option.Votes votes)</span></p>
+            <div data="@percentage" class="visualisation"></div>
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="link">
+        @HttpContext.Current.Request.Url.AbsoluteUri
+    </div>
+    <button onclick="location.href='@Url.Action("Vote", "Poll", new { @id = Model.Poll.Id })'">Vote</button>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            var visuals = $(".visualisation");
+            for (var i = 0; i < visuals.length; i++) {
+                var divWidth = $(visuals[i]).attr("data");
+
+                if (divWidth > 0) {
+                    $(visuals[i]).animate({
+                        width: divWidth + "%"
+                    }, 0);
+                }
+            }
+        });
+    </script>    
+}
+
+

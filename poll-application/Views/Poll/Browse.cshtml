@@ -1,0 +1,34 @@
+﻿@model poll_application.ViewModels.PollBrowseViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <h1>Browse polls</h1>
+</div>
+
+<div class="latest-row">
+    <h2>Latest polls</h2>
+    @foreach (var poll in Model.LatestPolls)
+    {
+        <div class="row align-center justify-center space-between">
+            @Html.ActionLink(@poll.Name, "Vote", "Poll", new { @id = @poll.Id }, null)
+            <small class="vote-number">@poll.Votes votes</small>
+        </div>
+    }
+</div>
+
+<div class="popular-row">
+    <h2>Popular polls</h2>
+    @foreach (var poll in Model.PopularPolls)
+    {
+        <div class="row align-center space-between">
+            @Html.ActionLink(@poll.Name, "Vote", "Poll", new { @id = @poll.Id }, null)
+            <small class="vote-number">@poll.Votes votes</small>
+        </div>
+    }
+
+</div>
+
+
